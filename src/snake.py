@@ -14,7 +14,9 @@ class Snake:
 
         self.movesSurvived = 0
         self.score = 0
-        self.movesLeft = 200
+        self.movesLeft = 100
+
+        self.fitness = 0
 
         self.network = network
 
@@ -46,8 +48,6 @@ class Snake:
     def decide(self, applePos, gridSize):
         inputs = self.look(applePos, gridSize)
         move = self.network.evaluate(inputs)
-
-        print(move)
 
         if move == 0:
             self.change_direction("up")
@@ -96,19 +96,24 @@ class Snake:
                     values[index * 3] = 1
 
                 if position in self.body and not bodyFound:
-                    values[index * 3 + 1] = dist / gridSize  # Normalized dist
+                    # / gridSize  # Normalized dist
+                    values[index * 3 + 1] = 1 / dist
                     bodyFound = True
 
                 if (not (0 < position.x < gridSize)) or (not (0 < position.y < gridSize)):
-                    values[index * 3 + 2] = dist / gridSize
+                    values[index * 3 + 2] = 1 / dist  # / gridSize
 
         # Convert to numpy array and transpose to column vector
         return np.atleast_2d(np.array(values)).T
 
     def grow(self):
         # If the snake grows it means that it ate an apple so give it more moves before it dies
-        self.movesLeft += 100
+        self.movesLeft += 75
+        self.score += 1
 
         # The direction the tail is traveling
         d = self.body[-2] - self.body[-1]
         self.body.append(self.body[-1] - d)  # Add to body
+
+    def calc_fitness(self):
+        self.fitness = ((5 * self.score) ** 2 + self.movesSurvived / 5)

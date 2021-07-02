@@ -1,25 +1,57 @@
 from operator import attrgetter
 from functools import reduce
-import random
 
+import random
 import numpy as np
 
 from snake import Snake
 from neuralnetwork import NeuralNetwork
 
 
-class SnakePopulation:
-    def __init__(self):
-        self.snakes = [generate_random_snake() for x in range(10)]
-        self.mutationRate = 0.05
+class Population:
+    def __init__(self, size):
+        self.size = size
+        self.snakes = [generate_random_snake() for x in range(self.size)]
+        self.mutationRate = 0.01
         self.generation = 1
+        self.elitismPercent = 0.05
 
-    def select(self):
-        ordered = sorted(self.snakes, key=attrgetter(
-            'score', 'movesSurvived'), reverse=True)
+    def get_highest_score(self):
+        return max([snake.score for snake in self.snakes])
 
-        # Top 4 snakes
-        return ordered[:4]
+    def probabilistic_select(self):
+        matingPool = []
+        for snake in self.snakes:
+            snake.calc_fitness()
+
+        # Sum of all snake fitness values
+        fitnessSum = sum([snake.fitness for snake in self.snakes])
+
+        # Normalize each fitness value to an integer between 0 and 100
+        for snake in self.snakes:
+            snake.fitness = round(snake.fitness/fitnessSum * self.size)
+            for i in range(snake.fitness):
+                matingPool.append(snake)
+
+        return matingPool
+
+    def elitist_select(self):
+        matingPool = []
+        for snake in self.snakes:
+            snake.calc_fitness()
+
+        ordered = sorted(self.snakes, key=attrgetter('fitness'), reverse=True)
+
+        fittest = ordered[:int(self.elitismPercent * self.size)]
+
+        fitnessSum = sum([snake.fitness for snake in fittest])
+
+        for snake in self.snakes:
+            snake.fitness = round(snake.fitness/fitnessSum * len(fittest))
+            for i in range(snake.fitness):
+                matingPool.append(snake)
+
+        return matingPool
 
     def crossover(self, snake1: Snake, snake2: Snake):
         # Both snakes have the same network shapes
@@ -58,14 +90,18 @@ class SnakePopulation:
         return Snake(NeuralNetwork([24, 30, 4], childWeights, childBiases))
 
     def create_next_gen(self):
+        matingPool = self.elitist_select()
         newGen = []
-        fittest = self.select()
-        for i in range(10):
+
+        for i in range(self.size):
             # Picks 2 parents for the crossover
-            parents = np.random.choice(range(4), 2, replace=False)
-            child = self.crossover(fittest[parents[0]], fittest[parents[1]])
+            parent1 = matingPool[random.randint(0, len(matingPool) - 1)]
+            parent2 = matingPool[random.randint(0, len(matingPool) - 1)]
+            child = self.crossover(parent1, parent2)
             newGen.append(child)
+
         self.snakes = newGen
+        self.generation += 1
 
     def mutate(self, arr):
         for i in range(len(arr)):
@@ -83,7 +119,7 @@ layer excluding the input layer.
 
 
 def generate_random_snake():
-    sizes = [24, 30, 4]
+    sizes = [24, 18, 4]
     weights = [np.random.randn(y, x) for x, y in zip(sizes[:-1], sizes[1:])]
     biases = [np.random.randn(y, 1) for y in sizes[1:]]
 

@@ -20,6 +20,11 @@ class NeuralNetwork:
         return np.argmax(a)
 
 
+def sigmoid(z):
+    return 1.0 / (1.0 + np.exp(-z))
+
 # Activation function
+
+
 def relu(z):
     return np.maximum(0, z)
