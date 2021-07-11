@@ -16,8 +16,11 @@ class Population:
         self.generation = 1
         self.elitismPercent = 0.05
 
-    def get_highest_score(self):
-        return max([snake.score for snake in self.snakes])
+        # The best score yet across all generations
+        self.bestScore = 0
+
+    def get_best_snake(self):
+        return max(self.snakes, key=attrgetter('score'))
 
     def probabilistic_select(self):
         matingPool = []
@@ -30,7 +33,7 @@ class Population:
         # Normalize each fitness value to an integer between 0 and 100
         for snake in self.snakes:
             snake.fitness = round(snake.fitness/fitnessSum * self.size)
-            for i in range(snake.fitness):
+            for _ in range(snake.fitness):
                 matingPool.append(snake)
 
         return matingPool
@@ -48,7 +51,7 @@ class Population:
 
         for snake in self.snakes:
             snake.fitness = round(snake.fitness/fitnessSum * len(fittest))
-            for i in range(snake.fitness):
+            for _ in range(snake.fitness):
                 matingPool.append(snake)
 
         return matingPool
@@ -93,7 +96,7 @@ class Population:
         matingPool = self.elitist_select()
         newGen = []
 
-        for i in range(self.size):
+        for _ in range(self.size):
             # Picks 2 parents for the crossover
             parent1 = matingPool[random.randint(0, len(matingPool) - 1)]
             parent2 = matingPool[random.randint(0, len(matingPool) - 1)]

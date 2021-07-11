@@ -14,17 +14,14 @@ class NeuralNetwork:
     def evaluate(self, inputs):
         a = inputs
         for w, b in zip(self.weights, self.biases):
-            a = relu(np.dot(w, a) + b)
+            a = sigmoid(np.dot(w, a) + b)
 
         # Returns brightest activation in output layer
         return np.argmax(a)
 
-
+# Activation functions
 def sigmoid(z):
     return 1.0 / (1.0 + np.exp(-z))
-
-# Activation function
-
 
 def relu(z):
     return np.maximum(0, z)

@@ -1,11 +1,4 @@
-import random
-import numpy as np
-
-import pygame
 from pygame import Vector2
-
-from snake import Snake
-from neuralnetwork import NeuralNetwork
 
 
 class SnakeGame:
@@ -23,22 +16,6 @@ class SnakeGame:
         self.spawn_apple()
 
     def update(self):
-
-        # Flag for making sure only 1 input is allowed per frame
-        # inputted = False
-        # for event in events:
-        #     # Accept input
-        #     if event.type == pygame.KEYDOWN and not inputted:
-        #         inputted = True
-        #         if event.key == pygame.K_LEFT:
-        #             self.snake.change_direction("left")
-        #         elif event.key == pygame.K_RIGHT:
-        #             self.snake.change_direction("right")
-        #         elif event.key == pygame.K_UP:
-        #             self.snake.change_direction("up")
-        #         elif event.key == pygame.K_DOWN:
-        #             self.snake.change_direction("down")
-
         # Snake decides what direction to go in using the network
         self.snake.decide(self.apple, self.gridSize)
 
