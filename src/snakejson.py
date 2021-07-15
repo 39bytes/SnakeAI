@@ -38,7 +38,7 @@ def load_snake(filename, num=-1):
 
         weights = [np.array(arr) for arr in data[num]["weights"]]
         biases = [np.array(arr) for arr in data[num]["biases"]]
-        network = NeuralNetwork(constants.NN_SHAPE, weights, biases)
+        network = NeuralNetwork(constants.NN_SIZES, weights, biases)
 
         return Snake(network)
 

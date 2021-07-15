@@ -11,7 +11,7 @@ from snakejson import create_json, write_snake, load_snake, log_score
 SCALE = 16
 SIZE = 256
 
-train = True
+train = False
 
 
 class SnakeAI:
@@ -165,4 +165,4 @@ if __name__ == '__main__':
     if train:
         s.train()
     else:
-        s.test("snakes1626365944.json")
+        s.test("snakes1626367905.json")
