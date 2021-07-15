@@ -18,6 +18,7 @@ class Snake:
 
         self.fitness = 0
 
+        # The neural network which does the decisions
         self.network = network
 
     def move(self):
@@ -116,4 +117,4 @@ class Snake:
         self.body.append(self.body[-1] - d)  # Add to body
 
     def calc_fitness(self):
-        self.fitness = ((5 * self.score) ** 2 + self.movesSurvived / 5)
+        self.fitness = ((3 * self.score) ** 2 + self.movesSurvived / 10)

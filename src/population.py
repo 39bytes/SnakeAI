@@ -6,12 +6,15 @@ import numpy as np
 
 from snake import Snake
 from neuralnetwork import NeuralNetwork
+import constants
 
 
 class Population:
     def __init__(self, size):
         self.size = size
+        # Initializes the population with random genes
         self.snakes = [generate_random_snake() for x in range(self.size)]
+        
         self.mutationRate = 0.01
         self.generation = 1
         self.elitismPercent = 0.05
@@ -30,9 +33,10 @@ class Population:
         # Sum of all snake fitness values
         fitnessSum = sum([snake.fitness for snake in self.snakes])
 
-        # Normalize each fitness value to an integer between 0 and 100
+        # Normalize each fitness value to an integer between 0 and the population size
         for snake in self.snakes:
             snake.fitness = round(snake.fitness/fitnessSum * self.size)
+            # Add the snake to the mating pool that many times
             for _ in range(snake.fitness):
                 matingPool.append(snake)
 
@@ -56,7 +60,7 @@ class Population:
 
         return matingPool
 
-    def crossover(self, snake1: Snake, snake2: Snake):
+    def point_crossover(self, snake1: Snake, snake2: Snake):
         # Both snakes have the same network shapes
         weightShapes = [x.shape for x in snake1.network.weights]
         biasShapes = [x.shape for x in snake1.network.biases]
@@ -90,7 +94,18 @@ class Population:
         childBiases = unflatten(childBiases, biasShapes)
 
         # Return a child created from the crossed over genes
-        return Snake(NeuralNetwork([24, 30, 4], childWeights, childBiases))
+        return Snake(NeuralNetwork(constants.NN_SHAPE, childWeights, childBiases))
+
+    # Copies the genes to child and mutates
+    # This method relies entirely on mutation for evolution
+    def copy_crossover(self, snake: Snake):
+        childWeights = snake.network.weights
+        childBiases = snake.network.biases
+
+        self.mutate(childWeights)
+        self.mutate(childBiases)
+
+        return Snake(NeuralNetwork(constants.NN_SHAPE, childWeights, childBiases))
 
     def create_next_gen(self):
         matingPool = self.elitist_select()
@@ -100,7 +115,7 @@ class Population:
             # Picks 2 parents for the crossover
             parent1 = matingPool[random.randint(0, len(matingPool) - 1)]
             parent2 = matingPool[random.randint(0, len(matingPool) - 1)]
-            child = self.crossover(parent1, parent2)
+            child = self.point_crossover(parent1, parent2)
             newGen.append(child)
 
         self.snakes = newGen
@@ -108,7 +123,7 @@ class Population:
 
     def mutate(self, arr):
         for i in range(len(arr)):
-            if np.random.rand() < self.mutationRate:
+            if np.random.rand() <= self.mutationRate:
                 arr[i] = np.random.randn()
 
 
@@ -122,7 +137,7 @@ layer excluding the input layer.
 
 
 def generate_random_snake():
-    sizes = [24, 18, 4]
+    sizes = constants.NN_SHAPE
     weights = [np.random.randn(y, x) for x, y in zip(sizes[:-1], sizes[1:])]
     biases = [np.random.randn(y, 1) for y in sizes[1:]]
 
