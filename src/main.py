@@ -3,7 +3,6 @@ import math
 import pygame
 
 from numpy.random import RandomState
-from datetime import datetime
 
 from snakegame import SnakeGame
 from population import Population
