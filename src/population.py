@@ -10,12 +10,12 @@ import constants
 
 
 class Population:
-    def __init__(self, size):
+    def __init__(self, size, mutationRate):
         self.size = size
         # Initializes the population with random genes
         self.snakes = [generate_random_snake() for x in range(self.size)]
 
-        self.mutationRate = 0.01
+        self.mutationRate = mutationRate
         self.generation = 1
         self.elitismPercent = 0.05
 
@@ -117,16 +117,16 @@ class Population:
         matingPool = self.probabilistic_select()
         newGen = []
 
-        # for _ in range(self.size):
-        #     # Picks 2 parents for the crossover
-        #     parent1 = matingPool[random.randint(0, len(matingPool) - 1)]
-        #     parent2 = matingPool[random.randint(0, len(matingPool) - 1)]
-        #     child = self.point_crossover(parent1, parent2)
-        #     newGen.append(child)
         for _ in range(self.size):
-            parent = matingPool[random.randint(0, len(matingPool) - 1)]
-            child = self.copy_crossover(parent)
+            # Picks 2 parents for the crossover
+            parent1 = matingPool[random.randint(0, len(matingPool) - 1)]
+            parent2 = matingPool[random.randint(0, len(matingPool) - 1)]
+            child = self.point_crossover(parent1, parent2)
             newGen.append(child)
+        # for _ in range(self.size):
+        #     parent = matingPool[random.randint(0, len(matingPool) - 1)]
+        #     child = self.copy_crossover(parent)
+        #     newGen.append(child)
 
         self.snakes = newGen
         self.generation += 1

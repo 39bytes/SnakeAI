@@ -11,17 +11,23 @@ from snakejson import create_json, write_snake, load_snake, log_score
 SCALE = 16
 SIZE = 256
 
-train = False
+train = True
 
 
 class SnakeAI:
-    def __init__(self, training):
+    def __init__(self, training, mutationRate=0.01, bestSnakesFile="", scoresFile=""):
         pygame.init()
         pygame.display.set_caption("SnakeAI")
 
         timestamp = get_timestamp()
-        self.bestSnakesFile = f"snakes{timestamp}.json"
-        self.scoresFile = f"scores{timestamp}.json"
+        if not bestSnakesFile:
+            self.bestSnakesFile = f"snakes{timestamp}.json"
+        else:
+            self.bestSnakesFile = bestSnakesFile
+        if not scoresFile:
+            self.scoresFile = f"scores{timestamp}.json"
+        else:
+            self.scoresFile = scoresFile
 
         if training:
             self.screen = pygame.display.set_mode(
@@ -32,6 +38,7 @@ class SnakeAI:
         self.background = pygame.Surface(self.screen.get_size()).convert()
 
         self.fps = 15
+        self.mutationRate = mutationRate
 
     def train(self):
         # Create log files
@@ -39,11 +46,11 @@ class SnakeAI:
         create_json(self.scoresFile)
 
         # Initialisation
-        population = Population(300)
+        population = Population(300, self.mutationRate)
         games = self.initialize_games(population)
 
         # Game loop
-        while True:
+        while population.generation <= 300:  # Train for 300 generations
             self.get_input()
             self.update(games)
             pygame.time.wait(1000 // self.fps)
@@ -60,7 +67,7 @@ class SnakeAI:
             if allDead:
                 games = self.next_gen(population)
 
-    def test(self, filename, num=-1):
+    def test(self, filename, num=-1):  # TODO: Refactor this to different class/file
         snake = load_snake(filename, num)
         # Put the single game in an array so i can reuse the update function
         game = [SnakeGame(snake, SIZE / SCALE,
@@ -83,7 +90,8 @@ class SnakeAI:
         events = pygame.event.get()
         for event in events:
             if event.type == pygame.QUIT:
-                return
+                pygame.quit()
+                exit()
             # Speed up or slow down
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_UP and self.fps <= 115:  # max 120 fps

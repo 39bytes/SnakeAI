@@ -88,7 +88,7 @@ class Snake:
             bodyFound = False
 
             # While position is within the grid bounds
-            while (0 < position.x < gridSize) and (0 < position.y < gridSize):
+            while (0 <= position.x < gridSize) and (0 <= position.y < gridSize):
                 # Go forward in that direction by 1
                 position = position + direction
                 dist += 1
@@ -97,12 +97,11 @@ class Snake:
                     values[index * 3] = 1
 
                 if position in self.body and not bodyFound:
-                    # / gridSize  # Normalized dist
                     values[index * 3 + 1] = 1 / dist
                     bodyFound = True
 
                 if (not (0 < position.x < gridSize)) or (not (0 < position.y < gridSize)):
-                    values[index * 3 + 2] = 1 / dist  # / gridSize
+                    values[index * 3 + 2] = 1 / dist
 
         # Convert to numpy array and transpose to column vector
         return np.atleast_2d(np.array(values)).T
