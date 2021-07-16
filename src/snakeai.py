@@ -7,15 +7,11 @@ from numpy.random import RandomState
 from snakegame import SnakeGame
 from population import Population
 from snakejson import create_json, write_snake, load_snake, log_score
-
-SCALE = 16
-SIZE = 256
-
-train = True
+from constants import SIZE, SCALE
 
 
 class SnakeAI:
-    def __init__(self, training, mutationRate=0.01, bestSnakesFile="", scoresFile=""):
+    def __init__(self, mutationRate=0.01, bestSnakesFile="", scoresFile=""):
         pygame.init()
         pygame.display.set_caption("SnakeAI")
 
@@ -29,12 +25,9 @@ class SnakeAI:
         else:
             self.scoresFile = scoresFile
 
-        if training:
-            self.screen = pygame.display.set_mode(
-                (SIZE * 5, SIZE * 2))  # Display 10 snakes
-        else:
-            # Display only the one snake to test
-            self.screen = pygame.display.set_mode((SIZE, SIZE))
+        self.screen = pygame.display.set_mode(
+            (SIZE * 5, SIZE * 2))  # Display 10 snakes
+
         self.background = pygame.Surface(self.screen.get_size()).convert()
 
         self.fps = 15
@@ -67,20 +60,8 @@ class SnakeAI:
             if allDead:
                 games = self.next_gen(population)
 
-    def test(self, filename, num=-1):  # TODO: Refactor this to different class/file
-        snake = load_snake(filename, num)
-        # Put the single game in an array so i can reuse the update function
-        game = [SnakeGame(snake, SIZE / SCALE,
-                          RandomState(math.floor(time.time())))]
-        while True:
-            self.get_input()
-            self.update(game)
-            pygame.time.wait(1000 // self.fps)
-
-            if game[0].gameover:
-                raise SystemExit
-
     # Initializes each snake game with the same seed for its random number generator
+
     def initialize_games(self, population):
         seed = math.floor(time.time())
         return [SnakeGame(snake=snake, gridSize=SIZE / SCALE, rng=RandomState(seed))
@@ -169,8 +150,5 @@ def get_timestamp():
 
 
 if __name__ == '__main__':
-    s = SnakeAI(train)
-    if train:
-        s.train()
-    else:
-        s.test("snakes1626367905.json")
+    s = SnakeAI()
+    s.train()
