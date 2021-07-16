@@ -43,6 +43,8 @@ def load_snake(filename, num=-1):
         return Snake(network)
 
 # Generation log is just an array of integers (best score for each gen)
+
+
 def log_score(filename, score):
     with open(filename, "r+") as f:
         try:

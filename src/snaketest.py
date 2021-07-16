@@ -76,4 +76,4 @@ if __name__ == "__main__":
     filename = input("Snakes file to load:")
     num = input("Snake number (blank for last):")
 
-    test_snake(filename, num if num != "" else -1)
+    test_snake(filename, int(num) if num != "" else -1)
