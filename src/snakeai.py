@@ -6,15 +6,17 @@ from numpy.random import RandomState
 
 from snakegame import SnakeGame
 from population import Population
-from snakejson import create_json, write_snake, load_snake, log_score
+from snakejson import create_json, write_snake, log_score
 from constants import SIZE, SCALE
 
 
 class SnakeAI:
     def __init__(self, mutationRate=0.01, bestSnakesFile="", scoresFile=""):
+        # Initialize pygame
         pygame.init()
         pygame.display.set_caption("SnakeAI")
 
+        # Make the output filenames use the current timestamp if not specified
         timestamp = get_timestamp()
         if not bestSnakesFile:
             self.bestSnakesFile = f"snakes{timestamp}.json"
@@ -25,9 +27,9 @@ class SnakeAI:
         else:
             self.scoresFile = scoresFile
 
+        # Pygame display initialisation
         self.screen = pygame.display.set_mode(
             (SIZE * 5, SIZE * 2))  # Display 10 snakes
-
         self.background = pygame.Surface(self.screen.get_size()).convert()
 
         self.fps = 15
@@ -57,6 +59,7 @@ class SnakeAI:
                     allDead = False
                     break
 
+            # If so, move onto the next generation
             if allDead:
                 games = self.next_gen(population)
 
@@ -103,6 +106,7 @@ class SnakeAI:
                         yOffset += 1
                     continue
 
+            # Update the game
             game.update()
 
             if num < 10:
@@ -138,14 +142,18 @@ class SnakeAI:
         if bestSnake.score > population.bestScore:  # If the snake was a new best write it to disk
             population.bestScore = bestSnake.score
             write_snake(self.bestSnakesFile, population.generation, bestSnake)
+        # Log the best score for this generation
         log_score(self.scoresFile, bestSnake.score)
 
+        # Create the next generation of snakes
         population.create_next_gen()
         print(f"Generation:{population.generation}")
+
+        # Return a new list of games with the new generation
         return self.initialize_games(population)
 
 
-def get_timestamp():
+def get_timestamp():  # Returns the current timestamp (seconds)
     return math.floor(time.time())
 
 

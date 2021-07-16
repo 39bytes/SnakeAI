@@ -25,7 +25,7 @@ class Population:
     def get_best_snake(self):
         return max(self.snakes, key=attrgetter('score'))
 
-    def probabilistic_select(self):
+    def roulette_wheel_select(self):
         matingPool = []
         for snake in self.snakes:
             snake.calc_fitness()
@@ -49,6 +49,7 @@ class Population:
 
         ordered = sorted(self.snakes, key=attrgetter('fitness'), reverse=True)
 
+        # Returns the the top percentage according to elitismPercent
         return ordered[:int(self.elitismPercent * self.size)]
 
         # fitnessSum = sum([snake.fitness for snake in fittest])
@@ -114,7 +115,7 @@ class Population:
         return Snake(NeuralNetwork(constants.NN_SIZES, childWeights, childBiases))
 
     def create_next_gen(self):
-        matingPool = self.probabilistic_select()
+        matingPool = self.roulette_wheel_select()
         newGen = []
 
         for _ in range(self.size):
@@ -137,25 +138,22 @@ class Population:
                 arr[i] = np.random.randn()
 
 
-"""Weights is a list of randomly generated matrices with dimensions
-y by x, where x is the number of neurons in layer L and y is the number
-of neurons in the layer L+1.
-
-Biases is a list of randomly generated column vectors for each
-layer excluding the input layer.
-"""
-
-
 def generate_random_snake():
+    """Weights is a list of randomly generated matrices with dimensions
+    y by x, where x is the number of neurons in layer L and y is the number
+    of neurons in the layer L+1.
+
+    Biases is a list of randomly generated column vectors for each
+    layer excluding the input layer.
+    """
     sizes = constants.NN_SIZES
     weights = [np.random.randn(y, x) for x, y in zip(sizes[:-1], sizes[1:])]
     biases = [np.random.randn(y, 1) for y in sizes[1:]]
 
     return Snake(NeuralNetwork(sizes, weights, biases))
 
+
 # Function for flattening weights and biases into a 1d array for crossover
-
-
 def flatten(arr):
     # Flatten list of 2d arrays into list of 1d
     flattened = [x.flatten() for x in arr]
@@ -164,6 +162,7 @@ def flatten(arr):
     return reduce(lambda a, b: np.concatenate((a, b)), flattened)
 
 
+# Function that unflattens arrays produced by the above function back into their original shape
 def unflatten(arr, shapes):
     unflattened = []
 

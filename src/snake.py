@@ -13,9 +13,9 @@ class Snake:
         self.direction = Vector2(1, 0)
 
         self.movesSurvived = 0
-        self.score = 0
         self.movesLeft = 100
 
+        self.score = 0
         self.fitness = 0
 
         # The neural network which does the decisions
@@ -62,8 +62,11 @@ class Snake:
     """ Looks in 8 directions in order to determine the inputs
     Each direction has 3 values associated with it:
     1: Is the apple in that direction? (bool)
-    2: Distance to a body segment (normalized float)
-    3: Distance to a wall in that direction (normalized float) """
+    2: 1 / (Distance to a body segment)
+    3: 1 / (Distance to a wall in that direction)
+    The reciprocal of distances is taken so that the activation
+    is greater when the distance is small (ex: if the snake is
+    right next to a wall the activation should be 1) """
 
     def look(self, applePos, gridSize):
         directions = (Vector2(0, -1),  # Up
