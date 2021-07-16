@@ -11,6 +11,8 @@ from snakegame import SnakeGame
 fps = 15
 
 # Much of this testing code is just reused from the training code
+
+
 def test_snake(filename, num=-1):
     pygame.init()
     pygame.display.set_caption("SnakeAI")
@@ -52,6 +54,7 @@ def test_snake(filename, num=-1):
         pygame.time.wait(1000 // fps)
 
         if game.gameover:
+            print(snake.score)
             raise SystemExit
 
 
@@ -67,6 +70,7 @@ def get_input():
                 fps += 5
             if event.key == pygame.K_DOWN and fps >= 5:  # min 5 fps
                 fps -= 5
+
 
 if __name__ == "__main__":
     filename = input("Snakes file to load:")
