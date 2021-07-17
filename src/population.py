@@ -118,16 +118,16 @@ class Population:
         matingPool = self.roulette_wheel_select()
         newGen = []
 
-        for _ in range(self.size):
-            # Picks 2 parents for the crossover
-            parent1 = matingPool[random.randint(0, len(matingPool) - 1)]
-            parent2 = matingPool[random.randint(0, len(matingPool) - 1)]
-            child = self.point_crossover(parent1, parent2)
-            newGen.append(child)
         # for _ in range(self.size):
-        #     parent = matingPool[random.randint(0, len(matingPool) - 1)]
-        #     child = self.copy_crossover(parent)
+        #     # Picks 2 parents for the crossover
+        #     parent1 = matingPool[random.randint(0, len(matingPool) - 1)]
+        #     parent2 = matingPool[random.randint(0, len(matingPool) - 1)]
+        #     child = self.point_crossover(parent1, parent2)
         #     newGen.append(child)
+        for _ in range(self.size):
+            parent = matingPool[random.randint(0, len(matingPool) - 1)]
+            child = self.copy_crossover(parent)
+            newGen.append(child)
 
         self.snakes = newGen
         self.generation += 1

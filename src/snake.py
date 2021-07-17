@@ -119,4 +119,4 @@ class Snake:
         self.body.append(self.body[-1] - d)  # Add to body
 
     def calc_fitness(self):
-        self.fitness = ((3 * self.score) ** 2 + self.movesSurvived / 10)
+        self.fitness = ((2 * self.score) ** 2 + self.movesSurvived / 10)
