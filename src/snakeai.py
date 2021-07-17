@@ -7,7 +7,7 @@ from numpy.random import RandomState
 from snakegame import SnakeGame
 from population import Population
 from snakejson import create_json, write_snake, log_score
-from constants import SIZE, SCALE
+from constants import MAX_FPS, MAX_GENERATION, POPULATION_SIZE, SIZE, SCALE
 
 
 class SnakeAI:
@@ -41,11 +41,11 @@ class SnakeAI:
         create_json(self.scoresFile)
 
         # Initialisation
-        population = Population(300, self.mutationRate)
+        population = Population(POPULATION_SIZE, self.mutationRate)
         games = self.initialize_games(population)
 
         # Game loop
-        while population.generation <= 300:  # Train for 300 generations
+        while population.generation <= MAX_GENERATION:  # Train for 300 generations
             self.get_input()
             self.update(games)
             pygame.time.wait(1000 // self.fps)
@@ -78,7 +78,7 @@ class SnakeAI:
                 exit()
             # Speed up or slow down
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_UP and self.fps <= 115:  # max 120 fps
+                if event.key == pygame.K_UP and self.fps + 5 <= MAX_FPS:
                     self.fps += 5
                 if event.key == pygame.K_DOWN and self.fps >= 5:  # min 5 fps
                     self.fps -= 5
