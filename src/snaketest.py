@@ -4,11 +4,10 @@ import time
 
 from numpy.random import RandomState
 
-from constants import SIZE, SCALE
+from constants import MAX_FPS, SIZE, SCALE
 from snakejson import load_snake
 from snakegame import SnakeGame
 
-fps = 15
 
 # Much of this testing code is just reused from the training code
 
@@ -23,8 +22,19 @@ def test_snake(filename, num=-1):
     snake = load_snake(filename, num)
     game = SnakeGame(snake, SIZE / SCALE,
                      RandomState(math.floor(time.time())))
+    fps = 15
     while True:
-        get_input()
+        events = pygame.event.get()
+        for event in events:
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                exit()
+            # Speed up or slow down
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_UP and fps + 5 <= MAX_FPS:
+                    fps += 5
+                if event.key == pygame.K_DOWN and fps - 5 >= 5:  # min 5 fps
+                    fps -= 5
         # Fill background with black (clear screen)
         background.fill((0, 0, 0))
         screen.blit(background, (0, 0))
@@ -56,20 +66,6 @@ def test_snake(filename, num=-1):
         if game.gameover:
             print(snake.score)
             raise SystemExit
-
-
-def get_input():
-    events = pygame.event.get()
-    for event in events:
-        if event.type == pygame.QUIT:
-            pygame.quit()
-            exit()
-        # Speed up or slow down
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_UP and fps <= 115:  # max 120 fps
-                fps += 5
-            if event.key == pygame.K_DOWN and fps >= 5:  # min 5 fps
-                fps -= 5
 
 
 if __name__ == "__main__":
