@@ -25,6 +25,10 @@ class Population:
     def get_best_snake(self):
         return max(self.snakes, key=attrgetter('score'))
 
+    def calc_roulette_wheel_probs(self):
+        fitnessSum = sum([snake.fitness for snake in self.snakes])
+        return [snake.fitness/fitnessSum for snake in self.snakes]
+
     def elitist_select(self):
         for snake in self.snakes:
             snake.calc_fitness()
@@ -93,10 +97,20 @@ class Population:
 
         # for _ in range(self.size):
         #     # Picks 2 parents for the crossover
+        #     parent1 = matingPool[np.random.choice(
+        #         len(matingPool), p=selectionProbs)]
+        #     parent2 = matingPool[np.random.choice(
+        #         len(matingPool), p=selectionProbs)]
+        #     child = self.point_crossover(parent1, parent2)
+        #     newGen.append(child)
+        # for _ in range(self.size):
+        #     # Picks 2 parents for the crossover
         #     parent1 = matingPool[random.randint(0, len(matingPool) - 1)]
         #     parent2 = matingPool[random.randint(0, len(matingPool) - 1)]
         #     child = self.point_crossover(parent1, parent2)
         #     newGen.append(child)
+
+        # Create children
         for _ in range(self.size):
             parent = matingPool[random.randint(0, len(matingPool) - 1)]
             child = self.copy_crossover(parent)
