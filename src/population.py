@@ -25,25 +25,7 @@ class Population:
     def get_best_snake(self):
         return max(self.snakes, key=attrgetter('score'))
 
-    def roulette_wheel_select(self):
-        matingPool = []
-        for snake in self.snakes:
-            snake.calc_fitness()
-
-        # Sum of all snake fitness values
-        fitnessSum = sum([snake.fitness for snake in self.snakes])
-
-        # Normalize each fitness value to an integer between 0 and the population size
-        for snake in self.snakes:
-            snake.fitness = round(snake.fitness/fitnessSum * self.size)
-            # Add the snake to the mating pool that many times
-            for _ in range(snake.fitness):
-                matingPool.append(snake)
-
-        return matingPool
-
     def elitist_select(self):
-        matingPool = []
         for snake in self.snakes:
             snake.calc_fitness()
 
@@ -51,15 +33,6 @@ class Population:
 
         # Returns the the top percentage according to elitismPercent
         return ordered[:int(self.elitismPercent * self.size)]
-
-        # fitnessSum = sum([snake.fitness for snake in fittest])
-
-        # for snake in self.snakes:
-        #     snake.fitness = round(snake.fitness/fitnessSum * len(fittest))
-        #     for _ in range(snake.fitness):
-        #         matingPool.append(snake)
-
-        # return matingPool
 
     def point_crossover(self, snake1: Snake, snake2: Snake):
         # Both snakes have the same network shapes
@@ -115,7 +88,7 @@ class Population:
         return Snake(NeuralNetwork(constants.NN_SIZES, childWeights, childBiases))
 
     def create_next_gen(self):
-        matingPool = self.roulette_wheel_select()
+        matingPool = self.elitist_select()
         newGen = []
 
         # for _ in range(self.size):

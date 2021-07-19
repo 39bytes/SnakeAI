@@ -4,7 +4,7 @@ import time
 
 from numpy.random import RandomState
 
-from constants import MAX_FPS, SIZE, SCALE
+from constants import DEFAULT_FPS, MAX_FPS, SIZE, SCALE
 from snakejson import load_snake
 from snakegame import SnakeGame
 
@@ -22,7 +22,7 @@ def test_snake(filename, num=-1):
     snake = load_snake(filename, num)
     game = SnakeGame(snake, SIZE / SCALE,
                      RandomState(math.floor(time.time())))
-    fps = 15
+    fps = DEFAULT_FPS
     while True:
         events = pygame.event.get()
         for event in events:

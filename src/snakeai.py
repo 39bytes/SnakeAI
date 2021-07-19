@@ -7,7 +7,7 @@ from numpy.random import RandomState
 from snakegame import SnakeGame
 from population import Population
 from snakejson import create_json, write_snake, log_score
-from constants import MAX_FPS, MAX_GENERATION, POPULATION_SIZE, SIZE, SCALE
+from constants import DEFAULT_FPS, MAX_FPS, MAX_GENERATION, POPULATION_SIZE, SIZE, SCALE
 
 
 class SnakeAI:
@@ -32,7 +32,7 @@ class SnakeAI:
             (SIZE * 5, SIZE * 2))  # Display 10 snakes
         self.background = pygame.Surface(self.screen.get_size()).convert()
 
-        self.fps = 15
+        self.fps = DEFAULT_FPS
         self.mutationRate = mutationRate
 
     def train(self):

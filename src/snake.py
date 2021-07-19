@@ -1,3 +1,4 @@
+import math
 from typing import Literal
 from pygame import Vector2
 import numpy as np
@@ -111,7 +112,10 @@ class Snake:
 
     def grow(self):
         # If the snake grows it means that it ate an apple so give it more moves before it dies
-        self.movesLeft += 75
+        if self.score <= 50:
+            self.movesLeft = 150
+        else:
+            self.movesLeft = 255
         self.score += 1
 
         # The direction the tail is traveling
@@ -119,4 +123,4 @@ class Snake:
         self.body.append(self.body[-1] - d)  # Add to body
 
     def calc_fitness(self):
-        self.fitness = ((2 * self.score) ** 2 + self.movesSurvived / 10)
+        self.fitness = ((3 * self.score) ** 2 + self.movesSurvived / 10)

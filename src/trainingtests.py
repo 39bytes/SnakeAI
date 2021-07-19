@@ -2,21 +2,22 @@ from snakeai import SnakeAI
 
 
 def test_mutation_rates():  # Tests 1%, 2%, 3%, and 5% mutation rates
-    ai = SnakeAI(0.01, "snakesCopyCross1Percent3.json",
-                 "scoresCopyCross1Percent3.json")
-    ai.train()
+    for i in range(1, 4):
+        ai = SnakeAI(0.01, f"snakesCopyCross1Percent{i}.json",
+                     f"scoresCopyCross1Percent{i}.json")
+        ai.train()
 
-    ai = SnakeAI(0.02, "snakesCopyCross2Percent3.json",
-                 "scoresCopyCross2Percent3.json")
-    ai.train()
+        ai = SnakeAI(0.02, f"snakesCopyCross2Percent{i}.json",
+                     f"scoresCopyCross2Percent{i}.json")
+        ai.train()
 
-    ai = SnakeAI(0.03, "snakesCopyCross3Percent3.json",
-                 "scoresCopyCross3Percent3.json")
-    ai.train()
+        ai = SnakeAI(0.03, f"snakesCopyCross3Percent{i}.json",
+                     f"scoresCopyCross3Percent{i}.json")
+        ai.train()
 
-    ai = SnakeAI(0.05, "snakesCopyCross5Percent3.json",
-                 "scoresCopyCross5Percent3.json")
-    ai.train()
+        ai = SnakeAI(0.05, f"snakesCopyCross5Percent{i}.json",
+                     f"scoresCopyCross5Percent{i}.json")
+        ai.train()
 
 
 if __name__ == '__main__':
