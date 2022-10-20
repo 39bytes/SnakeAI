@@ -1,13 +1,12 @@
-import pygame
 import math
 import time
 
+import pygame
 from numpy.random import RandomState
 
-from constants import DEFAULT_FPS, MAX_FPS, SIZE, SCALE
+from constants import DEFAULT_FPS, MAX_FPS, SCALE, SIZE
+from snake import SnakeGame
 from snakejson import load_snake
-from snakegame import SnakeGame
-
 
 # Much of this testing code is just reused from the training code
 
@@ -44,15 +43,15 @@ def test_snake(filename, num=-1):
         # Draw the snake
         for segment in game.snake.body:
             pygame.draw.rect(background, (255, 255, 255),
-                             (segment.x * SCALE + 1,
-                                 segment.y * SCALE + 1,
-                                 SCALE - 1, SCALE - 1))
+                            (segment.x * SCALE + 1,
+                             segment.y * SCALE + 1,
+                             SCALE - 1, SCALE - 1))
 
         # Draw the apple
         pygame.draw.rect(background, (255, 0, 0),
-                         (game.apple.x * SCALE + 1,
-                             game.apple.y * SCALE + 1,
-                             SCALE - 1, SCALE - 1))
+                        (game.apple.x * SCALE + 1,
+                         game.apple.y * SCALE + 1,
+                         SCALE - 1, SCALE - 1))
 
         # Check for game overs
         game.check_for_collision()

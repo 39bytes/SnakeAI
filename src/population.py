@@ -1,23 +1,24 @@
-from operator import attrgetter
-from functools import reduce
-
 import random
+from functools import reduce
+from operator import attrgetter
+from typing import Tuple
+
 import numpy as np
 
-from snake import Snake
+from constants import *
 from neuralnetwork import NeuralNetwork
-import constants
+from snake import Snake
 
 
 class Population:
-    def __init__(self, size, mutationRate):
+    def __init__(self, size: int, mutationRate: float):
         self.size = size
         # Initializes the population with random genes
         self.snakes = [generate_random_snake() for x in range(self.size)]
 
         self.mutationRate = mutationRate
         self.generation = 1
-        self.elitismPercent = 0.05
+        self.elitismPercent = 0.10
 
         # The best score yet across all generations
         self.bestScore = 0
@@ -72,7 +73,7 @@ class Population:
         childBiases = unflatten(childBiases, biasShapes)
 
         # Return a child created from the crossed over genes
-        return Snake(NeuralNetwork(constants.NN_SIZES, childWeights, childBiases))
+        return Snake(NeuralNetwork(NN_SHAPE, childWeights, childBiases))
 
     # Copies the genes to child and mutates
     # This method relies entirely on mutation for evolution
@@ -89,37 +90,32 @@ class Population:
         childWeights = unflatten(childWeights, weightShapes)
         childBiases = unflatten(childBiases, biasShapes)
 
-        return Snake(NeuralNetwork(constants.NN_SIZES, childWeights, childBiases))
+        return Snake(NeuralNetwork(NN_SHAPE, childWeights, childBiases))
 
     def create_next_gen(self):
         matingPool = self.elitist_select()
         newGen = []
+        for snake in matingPool[0:5]:
+            newGen.append(Snake(snake.network))
 
-        # for _ in range(self.size):
-        #     # Picks 2 parents for the crossover
-        #     parent1 = matingPool[np.random.choice(
-        #         len(matingPool), p=selectionProbs)]
-        #     parent2 = matingPool[np.random.choice(
-        #         len(matingPool), p=selectionProbs)]
-        #     child = self.point_crossover(parent1, parent2)
-        #     newGen.append(child)
-        # for _ in range(self.size):
-        #     # Picks 2 parents for the crossover
-        #     parent1 = matingPool[random.randint(0, len(matingPool) - 1)]
-        #     parent2 = matingPool[random.randint(0, len(matingPool) - 1)]
-        #     child = self.point_crossover(parent1, parent2)
-        #     newGen.append(child)
+        for _ in range(self.size - 5):
+            # Picks 2 parents for the crossover
+            # It is possible that the same snake is chosen both times, but this isn't a big deal
+            parent1 = matingPool[random.randint(0, len(matingPool) - 1)]
+            parent2 = matingPool[random.randint(0, len(matingPool) - 1)]
+            child = self.point_crossover(parent1, parent2)
+            newGen.append(child)
 
         # Create children
-        for _ in range(self.size):
-            parent = matingPool[random.randint(0, len(matingPool) - 1)]
-            child = self.copy_crossover(parent)
-            newGen.append(child)
+        # for _ in range(self.size):
+        #     parent = matingPool[random.randint(0, len(matingPool) - 1)]
+        #     child = self.copy_crossover(parent)
+        #     newGen.append(child)
 
         self.snakes = newGen
         self.generation += 1
 
-    def mutate(self, arr):
+    def mutate(self, arr: np.ndarray):
         for i in range(len(arr)):
             if np.random.rand() <= self.mutationRate:
                 arr[i] = np.random.randn()
@@ -133,7 +129,7 @@ def generate_random_snake():
     Biases is a list of randomly generated column vectors for each
     layer excluding the input layer.
     """
-    sizes = constants.NN_SIZES
+    sizes = NN_SHAPE
     weights = [np.random.randn(y, x) for x, y in zip(sizes[:-1], sizes[1:])]
     biases = [np.random.randn(y, 1) for y in sizes[1:]]
 
@@ -141,7 +137,7 @@ def generate_random_snake():
 
 
 # Function for flattening weights and biases into a 1d array for crossover
-def flatten(arr):
+def flatten(arr: np.ndarray):
     # Flatten list of 2d arrays into list of 1d
     flattened = [x.flatten() for x in arr]
 
@@ -150,7 +146,7 @@ def flatten(arr):
 
 
 # Function that unflattens arrays produced by the above function back into their original shape
-def unflatten(arr, shapes):
+def unflatten(arr: np.ndarray, shapes: Tuple[int, ...]):
     unflattened = []
 
     index = 0
