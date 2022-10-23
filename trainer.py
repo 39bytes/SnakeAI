@@ -2,7 +2,6 @@ import math
 import time
 from typing import List
 
-import pygame
 from numpy.random import RandomState
 
 from constants import *
@@ -11,10 +10,9 @@ from renderer import Renderer
 from snake import SnakeGame
 from snakejson import create_json, create_output_folder, log_score, write_snake
 
-DRAW = False
-
-class SnakeAI:
-    def __init__(self, mutationRate=0.01, bestSnakesFile="", scoresFile=""):
+class SnakeTrainer:
+    def __init__(self, mutationRate: float, maxGeneration: int, 
+                 visualize: bool, bestSnakesFile="", scoresFile=""):
         # Make the output filenames use the current timestamp if not specified
         timestamp = get_timestamp()
 
@@ -24,21 +22,23 @@ class SnakeAI:
         # Create log files
         create_output_folder()
         create_json(self.bestSnakesFile)
-        create_json(self.scoresFile)
+        # create_json(self.scoresFile)
+
+        self.visualize = visualize
+        self.mutationRate = mutationRate
+        self.maxGeneration = maxGeneration
 
         # This initializes pygame if drawing is enabled
-        if DRAW:
+        if visualize:
             self.renderer = Renderer()
-
-        self.mutationRate = mutationRate
-
+        
     def train(self):
         # Initialization
         population = Population(POPULATION_SIZE, self.mutationRate)
         games = self.initialize_games(population)
 
         # Game loop
-        while population.generation <= MAX_GENERATION:  # Train for 300 generations
+        while population.generation <= self.maxGeneration:  # Train for 300 generations
             self.update(games)
 
             # Check if all snakes are dead
@@ -56,25 +56,23 @@ class SnakeAI:
                 for snake in population.snakes]
 
     def update(self, games: List[SnakeGame]):
-        if DRAW:
+        if self.visualize:
             self.renderer.draw(games)
 
         for game in games:
             game.update()
-            # Check for game overs
-            game.check_for_collision()
     
     # Writes this generation to disk and creates the next generation
     def next_gen(self, population: Population):
         bestSnake = population.get_best_snake()  # Best performer for this generation
-        print(f"Highest Score: {bestSnake.score} (Generation {population.generation}/{MAX_GENERATION})")
+        print(f"Highest Score: {bestSnake.score} (Generation {population.generation}/{self.maxGeneration})")
 
         if bestSnake.score > population.bestScore:  # If the snake was a new best write it to disk
             population.bestScore = bestSnake.score
             write_snake(self.bestSnakesFile, population.generation, bestSnake)
 
         # Log the best score for this generation
-        log_score(self.scoresFile, bestSnake.score)
+        # log_score(self.scoresFile, bestSnake.score)
 
         # Create the next generation of snakes
         population.create_next_gen()
@@ -86,7 +84,6 @@ class SnakeAI:
 def get_timestamp():  # Returns the current timestamp (seconds)
     return math.floor(time.time())
 
-
 if __name__ == '__main__':
-    s = SnakeAI(0.02)
+    s = SnakeTrainer(mutationRate=0.01, maxGeneration=200, visualize=False)
     s.train()

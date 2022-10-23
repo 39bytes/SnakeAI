@@ -1,4 +1,5 @@
 import math
+from random import Random
 from typing import Literal
 
 import numpy as np
@@ -115,7 +116,7 @@ class Snake:
     def grow(self):
         # If the snake grows it means that it ate an apple so give it more moves before it dies
         if self.score <= 50:
-            self.movesLeft = 150
+            self.movesLeft = 100
         else:
             self.movesLeft = 255
         self.score += 1
@@ -135,9 +136,9 @@ class SnakeGame:
 
         self.snake = snake
 
-        """The random number generator for the game
-        Each instance of a game has the same seed for its random number generator
-        for a generation so that each snake has the same conditions."""
+        # The random number generator for the game
+        # Each instance of a game has the same seed for its random number generator
+        # for a generation so that each snake has the same conditions.
         self.rng = rng
         self.spawn_apple()
 
@@ -157,6 +158,7 @@ class SnakeGame:
 
         if self.snake.movesLeft == 0:
             self.gameover = True
+        self.check_for_collision()
 
     # Spawns an apple at a random position on the field, apple cannot be inside of the snake's body.
     def spawn_apple(self):

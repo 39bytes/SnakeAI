@@ -18,7 +18,7 @@ class Population:
 
         self.mutationRate = mutationRate
         self.generation = 1
-        self.elitismPercent = 0.10
+        self.elitismPercent = 0.05
 
         # The best score yet across all generations
         self.bestScore = 0
@@ -95,10 +95,10 @@ class Population:
     def create_next_gen(self):
         matingPool = self.elitist_select()
         newGen = []
-        for snake in matingPool[0:5]:
+        for snake in matingPool[0:2]:
             newGen.append(Snake(snake.network))
 
-        for _ in range(self.size - 5):
+        for _ in range(self.size - 2):
             # Picks 2 parents for the crossover
             # It is possible that the same snake is chosen both times, but this isn't a big deal
             parent1 = matingPool[random.randint(0, len(matingPool) - 1)]

@@ -34,7 +34,6 @@ it will be set to `snakes{currentTimestamp}.json`.
 
 The `--visualize` flag toggles the training visualization, which displays the first 10 snake games so you can visually see the training progress. If this is turned on, the up and down arrow keys can be used to increase/decrease the FPS.
 Heavily slows down the training process so this is not recommended.
-By default this is off.
 
 To tweak other settings such as population size, grid size, etc. edit `constants.py`.
 
@@ -50,3 +49,5 @@ $ python snaketest.py
 Snakes file to load: output/output.json
 Snake number (blank for last):
 ```
+
+**Note:** Due to the randomness in snake, it may not perform as well as it did in training!

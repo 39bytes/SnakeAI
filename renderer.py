@@ -20,10 +20,10 @@ class Renderer:
                 exit()
             # Speed up or slow down
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_UP and self.fps + 5 <= MAX_FPS:
-                    self.fps += 5
-                if event.key == pygame.K_DOWN and self.fps >= 5:  # min 5 fps
-                    self.fps -= 5
+                if event.key == pygame.K_UP and self.fps + 10 <= MAX_FPS:
+                    self.fps += 10
+                if event.key == pygame.K_DOWN and self.fps >= 10:  # min 5 fps
+                    self.fps -= 10
     
     def draw(self, games):
         # For offsetting each correctly in order to draw them in a 5x2 grid
