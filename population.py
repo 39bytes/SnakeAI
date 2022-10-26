@@ -1,3 +1,4 @@
+import math
 import random
 from functools import reduce
 from operator import attrgetter
@@ -75,9 +76,8 @@ class Population:
         # Return a child created from the crossed over genes
         return Snake(NeuralNetwork(NN_SHAPE, childWeights, childBiases))
 
-    # Copies the genes to child and mutates
     # This method relies entirely on mutation for evolution
-    def copy_crossover(self, snake: Snake):
+    def copy_and_mutate(self, snake: Snake):
         childWeights = flatten(snake.network.weights)
         childBiases = flatten(snake.network.biases)
 
@@ -95,22 +95,23 @@ class Population:
     def create_next_gen(self):
         matingPool = self.elitist_select()
         newGen = []
-        for snake in matingPool[0:2]:
-            newGen.append(Snake(snake.network))
 
-        for _ in range(self.size - 2):
+        # Crossover will decrease with time to allow for more stable evolution
+        crossover_percent = get_proportion_to_crossover(self.generation)
+        crossover_amount = int(crossover_percent * POPULATION_SIZE)
+
+        for _ in range(crossover_amount):
             # Picks 2 parents for the crossover
             # It is possible that the same snake is chosen both times, but this isn't a big deal
             parent1 = matingPool[random.randint(0, len(matingPool) - 1)]
             parent2 = matingPool[random.randint(0, len(matingPool) - 1)]
             child = self.point_crossover(parent1, parent2)
             newGen.append(child)
-
-        # Create children
-        # for _ in range(self.size):
-        #     parent = matingPool[random.randint(0, len(matingPool) - 1)]
-        #     child = self.copy_crossover(parent)
-        #     newGen.append(child)
+        
+        for _ in range(POPULATION_SIZE - crossover_amount):
+            parent = matingPool[random.randint(0, len(matingPool) - 1)]
+            child = self.copy_and_mutate(parent)
+            newGen.append(child)
 
         self.snakes = newGen
         self.generation += 1
@@ -159,4 +160,12 @@ def unflatten(arr: np.ndarray, shapes: Tuple[int, ...]):
 
         # Move to the next slice starting point
         index += size
+
     return unflattened
+
+# Crossover will be always applied for the first 
+def get_proportion_to_crossover(generation: int):
+    if generation <= 100:
+        return 1
+    else:
+        return 2/(1 + math.exp(generation/60))
