@@ -106,9 +106,8 @@ class Snake:
                 if position in self.body and not bodyFound:
                     values[index * 3 + 1] = 1 / dist
                     bodyFound = True
-
-                if (not (0 < position.x < gridSize)) or (not (0 < position.y < gridSize)):
-                    values[index * 3 + 2] = 1 / dist
+                    
+            values[index * 3 + 2] = 1 / dist
 
         # Convert to numpy array and transpose to column vector
         return np.atleast_2d(np.array(values)).T
@@ -127,7 +126,6 @@ class Snake:
 
     def calc_fitness(self):
         self.fitness = ((3 * self.score) ** 2 + self.movesSurvived / 10)
-
         
 class SnakeGame:
     def __init__(self, snake: Snake, gridSize: int, rng: RandomState):
@@ -168,9 +166,9 @@ class SnakeGame:
 
     # Checks if the snake hits its own body or a wall
     def check_for_collision(self):
-        if (self.snake.body[0] in self.snake.body[1:] or
-            (self.snake.body[0].x >= (self.gridSize) or self.snake.body[0].x < 0) or
-                (self.snake.body[0].y >= (self.gridSize) or self.snake.body[0].y < 0)):
+        if (self.snake.body[0] in self.snake.body[1:] 
+        or (not (0 <= self.snake.body[0].x < self.gridSize))
+        or (not (0 <= self.snake.body[0].y < self.gridSize))):
             self.gameover = True
 
     def get_random_position(self):
