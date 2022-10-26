@@ -60,7 +60,8 @@ class SnakeTrainer:
             self.renderer.draw(games)
 
         for game in games:
-            game.update()
+            if not game.gameover:
+                game.update()
     
     # Writes this generation to disk and creates the next generation
     def next_gen(self, population: Population):
