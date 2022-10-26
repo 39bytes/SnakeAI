@@ -14,16 +14,18 @@ class Renderer:
     
     def get_input(self):
         events = pygame.event.get()
+        keys = pygame.key.get_pressed()
+
+        # Speed up or slow down
+        if keys[pygame.K_UP] and self.fps + 10 <= MAX_FPS:
+            self.fps += 10
+        if keys[pygame.K_DOWN] and self.fps > 10:
+            self.fps -= 10
+
         for event in events:
             if event.type == pygame.QUIT:
                 pygame.quit()
                 exit()
-            # Speed up or slow down
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_UP and self.fps + 10 <= MAX_FPS:
-                    self.fps += 10
-                if event.key == pygame.K_DOWN and self.fps >= 10:  # min 5 fps
-                    self.fps -= 10
     
     def draw(self, games):
         # For offsetting each correctly in order to draw them in a 5x2 grid
