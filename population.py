@@ -163,7 +163,8 @@ def unflatten(arr: np.ndarray, shapes: Tuple[int, ...]):
 
     return unflattened
 
-# Crossover will be always applied for the first 
+# Crossover will be always applied for the first 100 generations to get quick gains
+# After 100 generations this drops off, asymptotically approaching 0 for more stable evolution 
 def get_proportion_to_crossover(generation: int):
     if generation <= 100:
         return 1
