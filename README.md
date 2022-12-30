@@ -2,18 +2,18 @@
 
 A program that uses a genetic algorithm to train a neural network to play Snake.
 
-# Dependencies
+## Dependencies
 
 - NumPy 1.23.4
 - Pygame 2.1.2
 
-# Installation
+## Installation
 
 1. Clone the repository by running `git clone https://github.com/JeffDotPng/SnakeAI` in the command line.
 
 2. Navigate to the newly created directory and run `pip install -r requirements.txt` to install the required packages.
 
-# Usage
+## Usage
 
 ```
 $ main.py [-h] [-m [P]] [-g [N]] [-o [filename]] [--visualize]
@@ -37,7 +37,7 @@ Heavily slows down the training process so this is not recommended.
 
 To tweak other settings such as population size, grid size, etc. edit `constants.py`.
 
-## Example Usage
+### Example Usage
 
 To train for 1000 generations using the default mutation rate of 0.01:
 `$ python main.py -g 1000 -o output.json`
